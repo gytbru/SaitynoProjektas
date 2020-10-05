@@ -39,11 +39,12 @@ class CommentController extends AbstractController
         } else {
             $response->setData(
                 [
-                    'Status' => '404',
-                    'Body' => 'User not found',
+                    'status' => '404',
+                    'errors' => 'User not found',
                 ]
             );
             $response->setStatusCode(404);
+            return $response;
         }
 
         foreach ($posts as $post) {
@@ -66,14 +67,15 @@ class CommentController extends AbstractController
         if (empty($data)) {
             $response->setData(
                 [
-                    'Status' => '404',
-                    'Body' => 'Comment not found',
+                    'status' => '404',
+                    'errors' => 'Comment not found',
                 ]
             );
             $response->setStatusCode(404);
+            return $response;
         }
 
-        return $response->setData($data);
+        return $this->response($data, 200);
     }
 
     /**

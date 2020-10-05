@@ -63,11 +63,13 @@ class UserController extends AbstractController
                 ]
             );
             $response->setStatusCode(200);
+
         } else {
+
             $response->setData(
                 [
-                    'Status' => '404',
-                    'Body' => 'User not found',
+                    'status' => '404',
+                    'errors' => 'User not found',
                 ]
             );
             $response->setStatusCode(404);
@@ -99,8 +101,8 @@ class UserController extends AbstractController
         } else {
             $response->setData(
                 [
-                    'Status' => '404',
-                    'Body' => 'User not found',
+                    'status' => '404',
+                    'errors' => 'User not found',
                 ]
             );
             $response->setStatusCode(404);
@@ -119,18 +121,28 @@ class UserController extends AbstractController
         $response = new JsonResponse();
         $data = json_decode($request->getContent(), true);
         $user = $this->userRepository->findOneBy(['id' => $userId]);
+        if (empty($user)) {
+            $response->setData(
+                [
+                    'status' => '404',
+                    'errors' => 'User not found',
+                ]
+            );
+            $response->setStatusCode(404);
+
+            return $response;
+        }
 
         if (isset($data['email']) || isset($data['role'])) {
             $response->setStatusCode(200);
         } else {
             $response->setData(
                 [
-                    'Status' => '404',
-                    'Body' => 'User not found',
+                    'status' => '422',
+                    'errors' => 'Data not valid',
                 ]
             );
-            $response->setStatusCode(404);
-
+            $response->setStatusCode(422);
             return $response;
         }
 
@@ -140,7 +152,6 @@ class UserController extends AbstractController
         if (isset($data['role'])) {
             $user->setRole($data['role']);
         }
-
         $this->entityManagerInterface->persist($user);
         $this->entityManagerInterface->flush();
         $data = [

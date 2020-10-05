@@ -15,13 +15,19 @@ class UserResponse extends JsonResponse
     public function __construct(array $users)
     {
         $this->users = $users;
+
         if (!empty($this->users)) {
+
             parent::__construct($this->serialize(), 200);
+
         } else {
-            parent::__construct($data = [
-                'Status' => '404',
-                'Body' => 'User not found',
-            ], 404);
+
+            parent::__construct(
+                $data = [
+                    'status' => '404',
+                    'errors' => 'User not found',
+                ],
+                404);
         }
     }
 

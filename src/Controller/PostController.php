@@ -18,7 +18,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PostController extends AbstractController
 {
-
     /**
      * @param int $userId
      * @param UserRepository $userRepository
@@ -35,8 +34,8 @@ class PostController extends AbstractController
         } else {
             $response->setData(
                 [
-                    'Status' => '404',
-                    'Body' => 'User not found',
+                    'status' => '404',
+                    'errors' => 'User not found',
                 ]
             );
             $response->setStatusCode(404);
@@ -54,8 +53,8 @@ class PostController extends AbstractController
         if (empty($data)) {
             $response->setData(
                 [
-                    'Status' => '404',
-                    'Body' => 'Posts not found',
+                    'status' => '404',
+                    'errors' => 'Posts not found',
                 ]
             );
             $response->setStatusCode(404);
@@ -143,6 +142,7 @@ class PostController extends AbstractController
                         'description' => $post->getDescription(),
                     ]
                 );
+                $response->setStatusCode(200);
             } else {
                 $data = [
                     'status' => 404,
