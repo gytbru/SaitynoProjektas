@@ -33,6 +33,12 @@ class PostController extends AbstractController
         if (!empty($user)) {
             $posts = $user->getPosts();
         } else {
+            $response->setData(
+                [
+                    'Status' => '404',
+                    'Body' => 'User not found',
+                ]
+            );
             $response->setStatusCode(404);
         }
         $data = [];
@@ -46,6 +52,12 @@ class PostController extends AbstractController
                 ];
         }
         if (empty($data)) {
+            $response->setData(
+                [
+                    'Status' => '404',
+                    'Body' => 'Posts not found',
+                ]
+            );
             $response->setStatusCode(404);
         }
 
@@ -111,7 +123,7 @@ class PostController extends AbstractController
      * @return JsonResponse
      * @Route("/users/{userId}/posts/{postId}", name="posts_get", methods={"GET"})
      */
-    public function getPost(PostRepository $postRepository, int $postId,int  $userId)
+    public function getPost(PostRepository $postRepository, int $postId, int $userId)
     {
         $post = $postRepository->find($postId);
         $response = new JsonResponse();
@@ -134,7 +146,7 @@ class PostController extends AbstractController
             } else {
                 $data = [
                     'status' => 404,
-                    'errors' => "Post not found",
+                    'errors' => "User not found",
                 ];
                 return $this->response($data, 404);
             }
@@ -186,7 +198,7 @@ class PostController extends AbstractController
             } else {
                 $data = [
                     'status' => 404,
-                    'errors' => "Post not found",
+                    'errors' => "User not found",
                 ];
                 return $this->response($data, 404);
             }
@@ -223,7 +235,7 @@ class PostController extends AbstractController
         if ($post->getUser()->getId() != $userId) {
             $data = [
                 'status' => 404,
-                'errors' => "Post not found",
+                'errors' => "User not found",
             ];
             return $this->response($data, 404);
         }

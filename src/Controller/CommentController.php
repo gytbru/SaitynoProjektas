@@ -36,6 +36,14 @@ class CommentController extends AbstractController
         $user = $userRepository->findOneBy(['id' => $userId]);
         if (!empty($user)) {
             $posts = $user->getPosts();
+        } else {
+            $response->setData(
+                [
+                    'Status' => '404',
+                    'Body' => 'User not found',
+                ]
+            );
+            $response->setStatusCode(404);
         }
 
         foreach ($posts as $post) {
@@ -56,6 +64,12 @@ class CommentController extends AbstractController
                 ];
         }
         if (empty($data)) {
+            $response->setData(
+                [
+                    'Status' => '404',
+                    'Body' => 'Comment not found',
+                ]
+            );
             $response->setStatusCode(404);
         }
 
@@ -142,7 +156,7 @@ class CommentController extends AbstractController
             } else {
                 $data = [
                     'status' => 404,
-                    'errors' => "Comment not found",
+                    'errors' => "User not found",
                 ];
                 return $this->response($data, 404);
             }
@@ -217,6 +231,12 @@ class CommentController extends AbstractController
                             }
                         }
                     }
+                } else {
+                    $data = [
+                        'status' => 404,
+                        'errors' => "Post not found",
+                    ];
+                    return $this->response($data, 404);
                 }
             }
 

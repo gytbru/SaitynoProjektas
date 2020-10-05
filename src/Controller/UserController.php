@@ -64,6 +64,12 @@ class UserController extends AbstractController
             );
             $response->setStatusCode(200);
         } else {
+            $response->setData(
+                [
+                    'Status' => '404',
+                    'Body' => 'User not found',
+                ]
+            );
             $response->setStatusCode(404);
         }
         return $response;
@@ -91,6 +97,12 @@ class UserController extends AbstractController
             return $this->response($data);
 
         } else {
+            $response->setData(
+                [
+                    'Status' => '404',
+                    'Body' => 'User not found',
+                ]
+            );
             $response->setStatusCode(404);
         }
         return $response;
@@ -111,7 +123,13 @@ class UserController extends AbstractController
         if (isset($data['email']) || isset($data['role'])) {
             $response->setStatusCode(200);
         } else {
-            $response->setStatusCode(422);
+            $response->setData(
+                [
+                    'Status' => '404',
+                    'Body' => 'User not found',
+                ]
+            );
+            $response->setStatusCode(404);
 
             return $response;
         }

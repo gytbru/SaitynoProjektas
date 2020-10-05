@@ -15,7 +15,14 @@ class UserResponse extends JsonResponse
     public function __construct(array $users)
     {
         $this->users = $users;
-        parent::__construct($this->serialize(), $this->status());
+        if (!empty($this->users)) {
+            parent::__construct($this->serialize(), 200);
+        } else {
+            parent::__construct($data = [
+                'Status' => '404',
+                'Body' => 'User not found',
+            ], 404);
+        }
     }
 
     public function serialize()
@@ -31,10 +38,5 @@ class UserResponse extends JsonResponse
                 ];
         }
         return $data;
-    }
-
-    public function status()
-    {
-        return 200;
     }
 }
