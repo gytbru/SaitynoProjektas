@@ -39,6 +39,7 @@ class PostController extends AbstractController
                 ]
             );
             $response->setStatusCode(404);
+            return $response;
         }
         $data = [];
         foreach ($posts as $post) {
@@ -58,6 +59,7 @@ class PostController extends AbstractController
                 ]
             );
             $response->setStatusCode(404);
+            return $response;
         }
 
         return $response->setData($data);
