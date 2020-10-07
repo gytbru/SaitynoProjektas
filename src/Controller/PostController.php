@@ -31,7 +31,7 @@ class PostController extends AbstractController
         $posts = [];
         if (!empty($user)) {
             $posts = $user->getPosts();
-            if(empty(posts))
+            if(empty($posts))
             {
                 $data = [
                     'status' => 404,
