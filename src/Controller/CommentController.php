@@ -111,10 +111,10 @@ class CommentController extends AbstractController
                     $entityManager->flush();
 
                     $data = [
-                        'status' => 200,
+                        'status' => 201,
                         'success' => "Comment added successfully",
                     ];
-                    return $this->response($data);
+                    return $this->response($data,201);
                 } else {
                     $data = [
                         'status' => 404,
