@@ -12,13 +12,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Response\UserResponse;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 
 /**
  * Class UserController
  * @package App\Controller
  * @Route("/api", name="post_api")
  */
-class UserController extends AbstractController
+class UserController extends ApiController
 {
 
     /** @var UserRepository */
@@ -161,15 +163,6 @@ class UserController extends AbstractController
         return $this->response($data);
     }
 
-
-    /**
-     * @param Request $request
-     * @param EntityManagerInterface $entityManager
-     * @param UserPasswordEncoderInterface $passwordEncoder
-     * @return JsonResponse
-     * @throws \Exception
-     * @Route("/users", name="app_register", methods={"POST"})
-     */
     public function register(Request $request, EntityManagerInterface $entityManager,
                              UserPasswordEncoderInterface $passwordEncoder): Response
     {
@@ -203,6 +196,16 @@ class UserController extends AbstractController
             ];
             return $this->response($data, 422);
         }
+    }
+
+    /**
+     * @param UserInterface $user
+     * @param JWTTokenManagerInterface $JWTManager
+     * @return JsonResponse
+     */
+    public function getTokenUser(UserInterface $user, JWTTokenManagerInterface $JWTManager)
+    {
+        return new JsonResponse(['token' => $JWTManager->create($user)]);
     }
 
     /**
