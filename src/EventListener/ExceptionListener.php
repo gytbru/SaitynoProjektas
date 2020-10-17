@@ -19,15 +19,15 @@ class ExceptionListener
             $response->setStatusCode($exception->getStatusCode());
             $response->setData(
                 [
-                    'status' => '404',
-                    'errors' => 'Api address not found',
+                    'status' => $exception->getStatusCode(),
+                    'errors' => $exception->getMessage(),
                 ]
             );
         } else {
             $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
             $response->setData(
                 [
-                    'status' => '500',
+                    'status' => Response::HTTP_INTERNAL_SERVER_ERROR,
                     'errors' => 'Internal server error',
                 ]
             );
