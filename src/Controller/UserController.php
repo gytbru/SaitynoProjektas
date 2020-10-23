@@ -37,11 +37,24 @@ class UserController extends ApiController
     }
 
     /**
+     * @var User $user
      * @Route("/users", name="get-users-list", methods={"GET"})
      */
     public function getUsersList()
     {
-        return new UserResponse($this->userRepository->findAll());
+        $response = new JsonResponse();
+        $user = $this->getUser();
+        if ($user->getRole() == 'ADMIN') {
+            return new UserResponse($this->userRepository->findAll());
+        }
+        $response->setData(
+            [
+                'status' => '403',
+                'errors' => 'Access denied',
+            ]
+        );
+        $response->setStatusCode(403);
+        return $response;
     }
 
     /**
