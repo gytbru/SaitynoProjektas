@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
+use App\Response\PostResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,6 +19,22 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PostController extends AbstractController
 {
+    /** @var PostRepository */
+    private $postRespository;
+
+
+    public function __construct(
+        PostRepository $postRespository
+    )
+    {
+        $this->postRespository = $postRespository;
+    }
+
+    public function getPostsList()
+    {
+        return new PostResponse($this->postRespository->findAll());
+    }
+
     /**
      * @param int $userId
      * @param UserRepository $userRepository

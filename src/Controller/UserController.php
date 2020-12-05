@@ -37,15 +37,14 @@ class UserController extends ApiController
     }
 
     /**
-     * @var User $user
      * @Route("/users", name="get-users-list", methods={"GET"})
      */
     public function getUsersList()
     {
-        $response = new JsonResponse();
+        return new UserResponse($this->userRepository->findAll());
+        /*$response = new JsonResponse();
         $user = $this->getUser();
         if ($user->getRole() == 'ADMIN') {
-            return new UserResponse($this->userRepository->findAll());
         }
         $response->setData(
             [
@@ -54,7 +53,7 @@ class UserController extends ApiController
             ]
         );
         $response->setStatusCode(403);
-        return $response;
+        return $response;*/
     }
 
     /**
@@ -180,9 +179,7 @@ class UserController extends ApiController
                              UserPasswordEncoderInterface $passwordEncoder): Response
     {
         try {
-
             $request = $this->transformJsonBody($request);
-
             $user = new User();
             $user->setEmail($request->get('email'));
             $user->setPassword(
@@ -200,7 +197,7 @@ class UserController extends ApiController
                 'status' => 201,
                 'success' => "Register successfully",
             ];
-            return $this->response($data,201);
+            return $this->response($data, 201);
 
         } catch (\Exception $e) {
             $data = [
@@ -209,6 +206,29 @@ class UserController extends ApiController
             ];
             return $this->response($data, 422);
         }
+    }
+
+    /**
+     * @Route("/activeUser", name="get-active-user", methods={"GET"})
+     * @return JsonResponse
+     */
+    public function getActiveUser()
+    {
+        $response = new JsonResponse();
+        if ($this->getUser() == null) {
+            $response->setData(['message' => 'Unauthorized']);
+            $response->setStatusCode(401);
+            return $response;
+        }
+        $response->setData(
+            [
+                'id' => $this->getUser()->getId(),
+                'email' => $this->getUser()->getEmail(),
+                'role' => $this->getUser()->getRole(),
+            ]
+        );
+        $response->setStatusCode(200);
+        return $response;
     }
 
     /**
