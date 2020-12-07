@@ -30,6 +30,117 @@ class PostController extends AbstractController
         $this->postRespository = $postRespository;
     }
 
+    /**
+     * @param PostRepository $postRepository
+     * @param EntityManagerInterface $entityManager
+     * @param $postId
+     * @return JsonResponse
+     * @Route("/posts/{postId}", name="posts_delete_one", methods={"DELETE"})
+     */
+    public function deletePostDirectly(EntityManagerInterface $entityManager,
+                                       PostRepository $postRepository, int $postId)
+    {
+        $post = $postRepository->find($postId);
+
+        if (!$post) {
+            $data = [
+                'status' => 404,
+                'errors' => "Post not found",
+            ];
+            return $this->response($data, 404);
+        }
+
+        $entityManager->remove($post);
+        $entityManager->flush();
+        $data = [
+            'status' => 200,
+            'errors' => "Post deleted successfully",
+        ];
+        return $this->response($data);
+    }
+
+    /**
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @param PostRepository $postRepository
+     * @param $postId
+     * @return JsonResponse
+     * @Route("/posts/{postId}", name="posts_put_one", methods={"PUT"})
+     */
+    public function updatePostAdmin(Request $request, EntityManagerInterface $entityManager,
+                                    PostRepository $postRepository, $postId)
+    {
+        try {
+            $post = $postRepository->find($postId);
+
+            if (!$post) {
+                $data = [
+                    'status' => 404,
+                    'errors' => "Post not found",
+                ];
+                return $this->response($data, 404);
+            }
+
+            $request = $this->transformJsonBody($request);
+
+            if (!$request || !$request->get('name') || !$request->request->get('description')) {
+                throw new \Exception();
+            }
+
+            $post->setName($request->get('name'));
+            $post->setDescription($request->get('description'));
+            $entityManager->persist($post);
+            $entityManager->flush();
+
+            $data = [
+                'status' => 200,
+                'errors' => "Post updated successfully",
+            ];
+            return $this->response($data);
+
+        } catch (\Exception $e) {
+            $data = [
+                'status' => 422,
+                'errors' => "Data no valid",
+            ];
+            return $this->response($data, 422);
+        }
+    }
+
+    /**
+     * @Route("/posts/{postId}", name="get-post", methods={"GET"})
+     *
+     * @param int $postId
+     * @return JsonResponse
+     */
+    public function getOnePost(int $postId)
+    {
+        $response = new JsonResponse();
+        $post = $this->postRespository->findOneBy(['id' => $postId]);
+
+        if (!empty($post)) {
+
+            $response->setData(
+                [
+                    'id' => $post->getId(),
+                    'name' => $post->getName(),
+                    'description' => $post->getDescription(),
+                ]
+            );
+            $response->setStatusCode(200);
+
+        } else {
+            $response->setData(
+                [
+                    'status' => '404',
+                    'errors' => 'Post not found',
+                ]
+            );
+            $response->setStatusCode(404);
+        }
+        return $response;
+    }
+
     public function getPostsList()
     {
         return new PostResponse($this->postRespository->findAll());
@@ -48,8 +159,7 @@ class PostController extends AbstractController
         $posts = [];
         if (!empty($user)) {
             $posts = $user->getPosts();
-            if(empty($posts))
-            {
+            if (empty($posts)) {
                 $data = [
                     'status' => 404,
                     'errors' => "Posts not found",
@@ -124,7 +234,7 @@ class PostController extends AbstractController
                     'status' => 201,
                     'success' => "Post added successfully",
                 ];
-                return $this->response($data,201);
+                return $this->response($data, 201);
             } else {
                 $data = [
                     'status' => 404,
