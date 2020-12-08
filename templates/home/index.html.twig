@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 {% block title %}Pirk-Parduok{% endblock %}
 {% block body %}
+
     <head>
         <!--====== Required meta tags ======-->
         <meta charset="utf-8">
@@ -44,7 +45,6 @@
         });
 
         function checkPermissionUsers() {
-
             if (sessionStorage.getItem("userRole") == 'CLIENT') {
                 $('.addNewPost').removeAttr("style");
             } else {
@@ -89,7 +89,6 @@
                 async: false,
             });
             ajaxSendRequest.done(function (data) {
-
                 $('#modalPostForm').modal('hide');
                 $(".modal-backdrop").remove();
                 getPosts();
@@ -131,7 +130,6 @@
                 $('#modalRegisterForm').modal('hide');
                 $(".modal-backdrop").remove();
                 alert('Sveikiname sėkmingai prisiregistravus, dabar prisijunkite.');
-
             }).fail(function (textStatus, errorThrown) {
                 checkToken(textStatus.responseJSON);
                 $('.bad-login').removeAttr("style");
@@ -150,7 +148,6 @@
                 async: false,
             });
             ajaxSendRequest.done(function (data) {
-
                 var posts = "";
                 for (x in data) {
                     posts += "<div class=\"col-lg-4 col-md-7 col-sm-9\">\n" +
@@ -166,7 +163,7 @@
                         posts += "                        <div class=\"pricing-header text-center\">\n" +
                             " <ul class=\"carousel-btn rounded-buttons\">\n" +
                             "                                                <li ><a class=\"main-btn rounded-three register-to-visit\"\n" +
-                            "                                                       style=\"background: -webkit-linear-gradient(left, #63037d 0%, #e638f9 100%);\" onclick=getPost('" + data[x].id + "') data-toggle=\"modal\" data-target=\"#modalServiceForm\"\n" +
+                            "                                                       style=\"background: -webkit-linear-gradient(left, #63037d 0%, #e638f9 100%);\" onclick=getPost('" + data[x].id + "') data-toggle=\"modal\" data-target=\"#postEditForm\"\n" +
                             "                                                       href=\"\">Redaguoti</a></li>\n" +
                             "                                            </ul> </div>";
                         posts += "               <div class=\"pricing-header text-center\" style=\"padding-top: 10px \">\n" +
@@ -231,7 +228,6 @@
             ajaxSendRequest.done(function (data) {
                 sessionStorage.setItem("token", data['token']);
                 token = data['token'];
-
                 $('#modalLoginForm').modal('hide');
                 $(".modal-backdrop").remove();
                 $('#loginButton').attr("style", "display:none");
@@ -241,7 +237,6 @@
                 getActiveUser();
                 getPosts();
                 checkPermissionUsers();
-
             }).fail(function (textStatus, errorThrown) {
                 $('.bad-login').removeAttr("style");
                 $('.bad-login').attr("style", "color:red");
@@ -261,16 +256,14 @@
         var tempPostId = 0;
 
         function editPost() {
-
-            if ($('#service-edit-title').val() == "" || $('#service-edit-price').val() == "") {
-                $('.bad-service-data-edit').removeAttr("style");
-                $('.bad-service-data-edit').attr("style", "color:red");
+            if ($('#post-edit-name').val() == "" || $('#post-edit-description').val() == "") {
+                $('.bad-post-data').removeAttr("style");
+                $('.bad-post-data').attr("style", "color:red");
                 return;
             }
-
             var info = {
-                "name": $('#service-edit-title').val(),
-                "description": $('#service-edit-price').val()
+                "name": $('#post-edit-name').val(),
+                "description": $('#post-edit-description').val()
             }
             var ajaxSendRequest = $.ajax({
                 url: window.location.href + 'api/posts/' + tempPostId,
@@ -285,9 +278,9 @@
             });
             ajaxSendRequest.done(function (data) {
                 getPosts();
-                $('#modalServiceForm').modal('hide');
+                $('#postEditForm').modal('hide');
                 $(".modal-backdrop").remove();
-                $('.bad-service-data-edit').removeAttr("style");
+                $('.bad-post-data').removeAttr("style");
 
             }).fail(function (textStatus, errorThrown) {
                 checkToken(textStatus.responseJSON);
@@ -308,10 +301,8 @@
                 async: false,
             });
             ajaxSendRequest.done(function (data) {
-
-                $('#service-edit-title').val(data.name);
-                $('#service-edit-price').val(data.description);
-
+                $('#post-edit-name').val(data.name);
+                $('#post-edit-description').val(data.description);
             }).fail(function (textStatus, errorThrown) {
                 checkToken(textStatus.responseJSON);
             });
@@ -377,7 +368,7 @@
 
     <body>
 
-    <div class="modal fade" id="modalServiceForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    <div class="modal fade" id="postEditForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -393,14 +384,14 @@
                         <label data-error="wrong" data-success="right" for="defaultForm-email">Skelbimo
                             pavadinimas</label>
                         <br>
-                        <input type="text" id="service-edit-title" class="form-control ">
+                        <input type="text" id="post-edit-name" class="form-control ">
                     </div>
                     <div class="md-form mb-4">
                         <label data-error="wrong" data-success="right" for="defaultForm-pass">Aprašymas</label>
                         <br>
-                        <input type="text" id="service-edit-price" class="form-control ">
+                        <input type="text" id="post-edit-description" class="form-control ">
                     </div>
-                    <div class="bad-service-data-edit error-info" style="display: none; color: red">
+                    <div class="bad-post-data error-info" style="display: none; color: red">
                         Neužpildėte visų duomenų!!!
                     </div>
                 </div>
@@ -632,11 +623,9 @@
                                 </div> <!-- container -->
                             </div> <!-- carousel caption -->
                         </div> <!-- carousel-item -->
-
                         <a class="carousel-control-prev" href="#carouselOne" role="button" data-slide="prev">
                             <i class="lni-arrow-left-circle"></i>
                         </a>
-
                         <a class="carousel-control-next" href="#carouselOne" role="button" data-slide="next">
                             <i class="lni-arrow-right-circle"></i>
                         </a>
@@ -659,7 +648,6 @@
                 </div>
             </div> <!-- row -->
             <div class="posts-information row justify-content-center">
-
             </div>
         </div> <!-- container -->
     </section>
@@ -677,7 +665,6 @@
                     </div> <!-- section title -->
                 </div>
             </div> <!-- row -->
-
         </div> <!-- container -->
     </section>
 
